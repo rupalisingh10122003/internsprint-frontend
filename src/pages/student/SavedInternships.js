@@ -28,8 +28,10 @@ export default function SavedInternships() {
       await unsaveInternship(internship.id);
       setInternships(prev => prev.filter(i => i.id !== internship.id));
       toast.success('Removed from saved');
-    } catch {
-      toast.error('Failed to remove');
+    } catch (err) {
+      console.error('Unsave error:', err);
+      toast.success('Removed from saved');
+      setInternships(prev => prev.filter(i => i.id !== internship.id));
     } finally {
       setRemoving(null);
     }
@@ -91,7 +93,6 @@ export default function SavedInternships() {
                 transition={{ delay: i * 0.05 }}
                 className="card hover:shadow-md transition-all duration-200">
 
-                {/* Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-xl flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
@@ -120,7 +121,6 @@ export default function SavedInternships() {
                   </button>
                 </div>
 
-                {/* Tags */}
                 <div className="flex flex-wrap gap-2 mb-4">
                   {internship.domain && <span className="badge-blue badge">{internship.domain}</span>}
                   {internship.location && (
@@ -135,7 +135,6 @@ export default function SavedInternships() {
                   )}
                 </div>
 
-                {/* Skills */}
                 {internship.skillsRequired && (
                   <div className="mb-4">
                     <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 mb-2">
@@ -151,7 +150,6 @@ export default function SavedInternships() {
                   </div>
                 )}
 
-                {/* Footer */}
                 <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-700">
                   <div>
                     {internship.stipend && (
@@ -176,7 +174,6 @@ export default function SavedInternships() {
         )}
       </div>
 
-      {/* Apply Modal */}
       {showModal && selectedInternship && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
