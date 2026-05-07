@@ -33,7 +33,7 @@
     letter-spacing: -0.01em;
   }
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750 text-gray-700 dark:text-gray-200 font-semibold py-2.5 px-5 rounded-xl border border-gray-200 dark:border-gray-600 transition-all duration-150 active:scale-[0.97] select-none;
+    @apply inline-flex items-center justify-center gap-2 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 font-semibold py-2.5 px-5 rounded-xl border border-gray-200 dark:border-gray-600 transition-all duration-150 active:scale-[0.97] select-none;
   }
   .btn-outline {
     @apply inline-flex items-center justify-center gap-2 border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white font-semibold py-2.5 px-5 rounded-xl transition-all duration-150 active:scale-[0.97] select-none;
