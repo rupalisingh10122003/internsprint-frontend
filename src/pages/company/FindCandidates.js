@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Zap, Users, ArrowLeft, Search, GraduationCap, Code, Star } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Zap, Users, ArrowLeft, Search, GraduationCap, Code, Star, ExternalLink, FileText, Mail, ChevronDown, ChevronUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import Navbar from '../../components/Navbar';
 import { getCompanyInternships, findMatchingStudents } from '../../api/internships';
@@ -14,6 +14,7 @@ export default function FindCandidates() {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [expandedId, setExpandedId] = useState(null);
 
   useEffect(() => {
     getCompanyInternships()
@@ -22,15 +23,8 @@ export default function FindCandidates() {
   }, []);
 
   const handleSearch = async () => {
-    const skills = selectedInternship
-      ? selectedInternship.skillsRequired
-      : customSkills;
-
-    if (!skills) {
-      toast.error('Select an internship or enter required skills');
-      return;
-    }
-
+    const skills = selectedInternship ? selectedInternship.skillsRequired : customSkills;
+    if (!skills) { toast.error('Select an internship or enter required skills'); return; }
     setLoading(true);
     try {
       const res = await findMatchingStudents(skills);
@@ -73,16 +67,12 @@ export default function FindCandidates() {
             <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white flex items-center gap-2">
               <Zap className="w-8 h-8 text-blue-600" /> AI Candidate Matching
             </h1>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">
-              Find the most relevant students for your internship role
-            </p>
+            <p className="text-gray-500 dark:text-gray-400 mt-1">Find the most relevant students for your internship role</p>
           </div>
         </div>
 
         <div className="card mb-8">
-          <h2 className="font-bold text-gray-900 dark:text-white mb-5 text-lg">
-            What role are you hiring for?
-          </h2>
+          <h2 className="font-bold text-gray-900 dark:text-white mb-5 text-lg">What role are you hiring for?</h2>
 
           {internships.length > 0 && (
             <div className="mb-5">
@@ -91,15 +81,9 @@ export default function FindCandidates() {
               </label>
               <div className="grid md:grid-cols-2 gap-3">
                 {internships.filter(i => i.status === 'open').map(internship => (
-                  <button
-                    key={internship.id}
+                  <button key={internship.id}
                     onClick={() => { setSelectedInternship(internship); setCustomSkills(''); }}
-                    className={`p-4 rounded-xl border-2 text-left transition-all ${
-                      selectedInternship?.id === internship.id
-                        ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20'
-                        : 'border-gray-200 dark:border-gray-700 hover:border-blue-300'
-                    }`}
-                  >
+                    className={`p-4 rounded-xl border-2 text-left transition-all ${selectedInternship?.id === internship.id ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700 hover:border-blue-300'}`}>
                     <p className="font-semibold text-gray-900 dark:text-white text-sm">{internship.title}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{internship.skillsRequired}</p>
                   </button>
@@ -115,21 +99,14 @@ export default function FindCandidates() {
           </div>
 
           <div className="mb-5">
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              Required Skills
-            </label>
-            <input
-              value={selectedInternship ? selectedInternship.skillsRequired : customSkills}
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Required Skills</label>
+            <input value={selectedInternship ? selectedInternship.skillsRequired : customSkills}
               onChange={e => { setCustomSkills(e.target.value); setSelectedInternship(null); }}
-              placeholder="e.g. Python, Machine Learning, TensorFlow, SQL"
-              className="input"
-            />
+              placeholder="e.g. Python, Machine Learning, TensorFlow, SQL" className="input" />
           </div>
 
-          <button onClick={handleSearch} disabled={loading}
-            className="btn-primary flex items-center gap-2 px-8 py-3">
-            {loading
-              ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          <button onClick={handleSearch} disabled={loading} className="btn-primary flex items-center gap-2 px-8 py-3">
+            {loading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               : <><Search className="w-5 h-5" /> Find Matching Candidates</>}
           </button>
         </div>
@@ -140,19 +117,13 @@ export default function FindCandidates() {
               <h2 className="text-lg font-bold text-gray-900 dark:text-white">
                 {matches.length > 0 ? `${matches.length} Candidates Found` : 'No candidates found'}
               </h2>
-              {matches.length > 0 && (
-                <span className="text-sm text-gray-500 dark:text-gray-400">
-                  Sorted by AI match score
-                </span>
-              )}
+              {matches.length > 0 && <span className="text-sm text-gray-500 dark:text-gray-400">Sorted by AI match score</span>}
             </div>
 
             {matches.length === 0 ? (
               <div className="card text-center py-16">
                 <Users className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-gray-700 dark:text-gray-300 mb-2">
-                  No matching students yet
-                </h3>
+                <h3 className="text-xl font-bold text-gray-700 dark:text-gray-300 mb-2">No matching students yet</h3>
                 <p className="text-gray-400 dark:text-gray-500 max-w-md mx-auto">
                   No students with matching skills have registered yet. Try broader skill requirements or check back as more students join.
                 </p>
@@ -160,13 +131,9 @@ export default function FindCandidates() {
             ) : (
               <div className="space-y-4">
                 {matches.map((student, i) => (
-                  <motion.div
-                    key={student.id}
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    className="card hover:shadow-md transition-shadow"
-                  >
+                  <motion.div key={student.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }} className="card hover:shadow-md transition-shadow">
+
                     <div className="flex flex-col md:flex-row md:items-start gap-4">
                       <div className="flex items-center gap-4 flex-1">
                         <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-400 rounded-2xl flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
@@ -188,18 +155,27 @@ export default function FindCandidates() {
                               {student.cgpa ? ` • CGPA: ${student.cgpa}` : ''}
                             </div>
                           )}
-                          <p className="text-sm text-gray-500 dark:text-gray-400">{student.email}</p>
+                          <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+                            <Mail className="w-3 h-3" />
+                            <a href={`mailto:${student.email}`} className="hover:text-blue-600 hover:underline">{student.email}</a>
+                          </div>
                         </div>
                       </div>
 
-                      <div className="flex-shrink-0 text-center">
+                      <div className="flex items-center gap-3 flex-shrink-0">
                         <div className={`inline-flex flex-col items-center px-4 py-2 rounded-xl ${getMatchColor(student.matchPercent)}`}>
                           <span className="text-2xl font-extrabold">{student.matchPercent}%</span>
                           <span className="text-xs font-semibold">{getMatchLabel(student.matchPercent)}</span>
                         </div>
+                        <button onClick={() => setExpandedId(expandedId === student.id ? null : student.id)}
+                          className="btn-secondary text-xs py-1.5 px-3 flex items-center gap-1">
+                          {expandedId === student.id ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                          {expandedId === student.id ? 'Less' : 'More'}
+                        </button>
                       </div>
                     </div>
 
+                    {/* Skills */}
                     {student.skills && (
                       <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
                         <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 mb-2">
@@ -219,29 +195,59 @@ export default function FindCandidates() {
                       </div>
                     )}
 
-                    {(student.bio || student.linkedin || student.github) && (
-                      <div className="mt-3 flex flex-col md:flex-row md:items-center gap-3">
-                        {student.bio && (
-                          <p className="text-sm text-gray-500 dark:text-gray-400 flex-1 line-clamp-2">{student.bio}</p>
-                        )}
-                        <div className="flex gap-3">
-                          {student.linkedin && (
-                            <a href={student.linkedin.startsWith('http') ? student.linkedin : `https://${student.linkedin}`}
-                              target="_blank" rel="noopener noreferrer"
-                              className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:underline">
-                              <span className="font-bold text-xs border border-current rounded px-1">in</span> LinkedIn
-                            </a>
+                    {/* Expanded Details */}
+                    <AnimatePresence>
+                      {expandedId === student.id && (
+                        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 space-y-3">
+
+                          {/* Bio */}
+                          {student.bio && (
+                            <div>
+                              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">About</p>
+                              <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{student.bio}</p>
+                            </div>
                           )}
-                          {student.github && (
-                            <a href={student.github.startsWith('http') ? student.github : `https://${student.github}`}
-                              target="_blank" rel="noopener noreferrer"
-                              className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-300 hover:underline">
-                              <span className="font-bold text-xs">GH</span> GitHub
-                            </a>
+
+                          {/* Resume */}
+                          {student.resumeUrl && (
+                            <div>
+                              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Resume</p>
+                              <a href={student.resumeUrl} target="_blank" rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:underline bg-blue-50 dark:bg-blue-900/20 px-3 py-1.5 rounded-lg">
+                                <FileText className="w-4 h-4" /> View Resume <ExternalLink className="w-3 h-3" />
+                              </a>
+                            </div>
                           )}
-                        </div>
-                      </div>
-                    )}
+
+                          {/* Links */}
+                          {(student.linkedin || student.github) && (
+                            <div>
+                              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Profiles</p>
+                              <div className="flex gap-3">
+                                {student.linkedin && (
+                                  <a href={student.linkedin.startsWith('http') ? student.linkedin : `https://${student.linkedin}`}
+                                    target="_blank" rel="noopener noreferrer"
+                                    className="flex items-center gap-2 text-sm text-white bg-blue-700 hover:bg-blue-800 px-3 py-1.5 rounded-lg font-medium transition-colors">
+                                    <span className="font-bold text-xs border border-white/50 rounded px-1">in</span>
+                                    LinkedIn <ExternalLink className="w-3 h-3" />
+                                  </a>
+                                )}
+                                {student.github && (
+                                  <a href={student.github.startsWith('http') ? student.github : `https://${student.github}`}
+                                    target="_blank" rel="noopener noreferrer"
+                                    className="flex items-center gap-2 text-sm text-white bg-gray-800 hover:bg-gray-900 px-3 py-1.5 rounded-lg font-medium transition-colors">
+                                    <span className="font-bold text-xs">GH</span>
+                                    GitHub <ExternalLink className="w-3 h-3" />
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </motion.div>
                 ))}
               </div>

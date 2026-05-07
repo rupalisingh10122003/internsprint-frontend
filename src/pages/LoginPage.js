@@ -17,18 +17,35 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!form.email || !form.password) {
+      toast.error('Please enter both email and password');
+      return;
+    }
     setLoading(true);
     try {
-      const res = await loginAPI(form);
+      const res = await loginAPI({ email: form.email.trim().toLowerCase(), password: form.password });
       const { token, role, userId, name, email } = res.data.data;
       login({ userId, name, email, role }, token);
       toast.success(`Welcome back, ${name}!`);
       navigate(`/${role}`);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Login failed');
+      const msg = err.response?.data?.message;
+      if (msg?.toLowerCase().includes('password')) {
+        toast.error('Incorrect password. Please try again.');
+      } else if (msg?.toLowerCase().includes('email') || msg?.toLowerCase().includes('user')) {
+        toast.error('No account found with this email.');
+      } else {
+        toast.error(msg || 'Login failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
+  };
+
+  const fillDemo = (role) => {
+    if (role === 'student') setForm({ email: 'test@test.com', password: '123456' });
+    if (role === 'company') setForm({ email: 'company1@test.com', password: '1234561' });
+    if (role === 'admin') setForm({ email: 'admin2@internsprint.com', password: 'password' });
   };
 
   return (
@@ -90,7 +107,7 @@ export default function LoginPage() {
                 Email address
               </label>
               <input name="email" type="email" value={form.email} onChange={handleChange}
-                placeholder="you@example.com" className="input" required />
+                placeholder="you@example.com" className="input" required autoComplete="email" />
             </div>
 
             <div>
@@ -105,7 +122,7 @@ export default function LoginPage() {
               <div className="relative">
                 <input name="password" type={showPassword ? 'text' : 'password'}
                   value={form.password} onChange={handleChange}
-                  placeholder="••••••••" className="input pr-12" required />
+                  placeholder="••••••••" className="input pr-12" required autoComplete="current-password" />
                 <button type="button" onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -121,9 +138,22 @@ export default function LoginPage() {
             </button>
           </form>
 
+          {/* Demo accounts - clickable */}
           <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
-            <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-2">Demo accounts:</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Student: test@test.com / 123456</p>
+            <p className="text-xs text-blue-600 dark:text-blue-400 font-semibold mb-3">Quick demo login:</p>
+            <div className="flex gap-2 flex-wrap">
+              {[
+                { role: 'student', label: 'Student', color: 'bg-blue-600' },
+                { role: 'company', label: 'Company', color: 'bg-purple-600' },
+                { role: 'admin', label: 'Admin', color: 'bg-red-600' },
+              ].map(({ role, label, color }) => (
+                <button key={role} type="button" onClick={() => fillDemo(role)}
+                  className={`${color} text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:opacity-90 transition-opacity`}>
+                  {label}
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">Click a role to auto-fill credentials</p>
           </div>
         </div>
       </div>
