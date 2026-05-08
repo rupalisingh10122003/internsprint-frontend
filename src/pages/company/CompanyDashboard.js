@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Briefcase, Eye, XCircle, Plus, TrendingUp, AlertTriangle, Users, MapPin, Clock, Code, CheckCircle } from 'lucide-react';
+import { Briefcase, Eye, XCircle, Plus, TrendingUp, AlertTriangle, Users, MapPin, Clock, Code} from 'lucide-react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import Navbar from '../../components/Navbar';

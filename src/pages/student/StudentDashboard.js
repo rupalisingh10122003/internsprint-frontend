@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Briefcase, Clock, CheckCircle, Bell, ArrowRight, Search, TrendingUp, Award, Zap, Bookmark, FileText, User } from 'lucide-react';
+import { Briefcase, Clock, CheckCircle, Bell, ArrowRight, Search, TrendingUp,Zap, Bookmark, FileText, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import { useAuth } from '../../context/AuthContext';
