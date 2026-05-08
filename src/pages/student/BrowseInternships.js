@@ -51,16 +51,15 @@ export default function BrowseInternships() {
     return filtered;
   };
 
-// eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    fetchInternships();
-    getSavedInternships().then(res => {
-      const ids = new Set((res.data.data || []).map(i => i.id));
-      setSavedIds(ids);
-    }).catch(() => {});
-  }, []);
-  
-  const handleSearch = (e) => {
+    useEffect(() => {
+        fetchInternships(); // eslint-disable-line react-hooks/exhaustive-deps
+        getSavedInternships().then(res => {
+          const ids = new Set((res.data.data || []).map(i => i.id));
+          setSavedIds(ids);
+        }).catch(() => {});
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    
+    const handleSearch = (e) => {
     e.preventDefault();
     const params = {};
     if (search.keyword) params.keyword = search.keyword;
