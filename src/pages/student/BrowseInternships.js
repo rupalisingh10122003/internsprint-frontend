@@ -51,7 +51,7 @@ export default function BrowseInternships() {
     return filtered;
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+// eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchInternships();
     getSavedInternships().then(res => {
@@ -59,7 +59,7 @@ export default function BrowseInternships() {
       setSavedIds(ids);
     }).catch(() => {});
   }, []);
-
+  
   const handleSearch = (e) => {
     e.preventDefault();
     const params = {};
