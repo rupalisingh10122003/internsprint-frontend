@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Briefcase, Clock, CheckCircle, XCircle, Calendar, Building2, Trash2, MapPin } from 'lucide-react';
+import { Briefcase, Clock, CheckCircle, XCircle, Calendar, Building2, Trash2} from 'lucide-react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import Navbar from '../../components/Navbar';
