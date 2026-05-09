@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, User, CheckCircle, XCircle, Calendar, Eye, Mail, GraduationCap, Code, FileText, ExternalLink, Clock, Star, ChevronDown, ChevronUp, Phone } from 'lucide-react';
+import { ArrowLeft, User, CheckCircle, XCircle, Calendar,Mail, GraduationCap, Code, FileText, ExternalLink, Clock, Star, ChevronDown, ChevronUp} from 'lucide-react';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../../components/Navbar';
