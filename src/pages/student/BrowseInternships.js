@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, MapPin, Code, Filter, Zap, Briefcase, Clock, ArrowRight, Building2, Bookmark, BookmarkCheck, SlidersHorizontal, X } from 'lucide-react';
+import { Search, MapPin, Code, Filter, Zap, Briefcase, Clock, ArrowRight, Building2, Bookmark, BookmarkCheck, SlidersHorizontal, X, Shield, DollarSign, Calendar, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import Navbar from '../../components/Navbar';
@@ -29,12 +29,11 @@ export default function BrowseInternships() {
     try {
       const res = await searchInternships(params);
       let data = res.data.data || [];
-      // Client-side location filter for exact city match
       if (params.location) {
         const loc = params.location.toLowerCase().trim();
         data = data.filter(i => i.location?.toLowerCase().includes(loc));
       }
-      data = applyClientFilters(data, params);
+      data = applyClientFilters(data);
       setInternships(data);
     } catch (err) {
       toast.error('Failed to load internships');
@@ -43,7 +42,7 @@ export default function BrowseInternships() {
     }
   };
 
-  const applyClientFilters = (data, params = {}) => {
+  const applyClientFilters = (data) => {
     let filtered = [...data];
     if (filters.remote === 'remote') filtered = filtered.filter(i => i.location?.toLowerCase().includes('remote'));
     if (filters.remote === 'onsite') filtered = filtered.filter(i => !i.location?.toLowerCase().includes('remote'));
@@ -51,15 +50,15 @@ export default function BrowseInternships() {
     return filtered;
   };
 
-    useEffect(() => {
-        fetchInternships(); // eslint-disable-line react-hooks/exhaustive-deps
-        getSavedInternships().then(res => {
-          const ids = new Set((res.data.data || []).map(i => i.id));
-          setSavedIds(ids);
-        }).catch(() => {});
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
-    
-    const handleSearch = (e) => {
+  useEffect(() => {
+    fetchInternships(); // eslint-disable-line react-hooks/exhaustive-deps
+    getSavedInternships().then(res => {
+      const ids = new Set((res.data.data || []).map(i => i.id));
+      setSavedIds(ids);
+    }).catch(() => {});
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleSearch = (e) => {
     e.preventDefault();
     const params = {};
     if (search.keyword) params.keyword = search.keyword;
@@ -89,6 +88,7 @@ export default function BrowseInternships() {
         skillsRequired: m.skills_required, stipend: m.stipend, duration: m.duration,
         deadline: m.deadline, companyName: m.company_name,
         companyVerified: !!m.is_verified, matchPercent: m.matchPercent,
+        description: m.description,
       }));
       setInternships(mapped);
       setAiMode(true);
@@ -151,12 +151,12 @@ export default function BrowseInternships() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen bg-[#F5F7FA] dark:bg-[#0A0F1E]">
       <Navbar />
 
-      <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 py-8 px-4">
+      <div className="bg-white dark:bg-[#0d1117] border-b border-gray-100 dark:border-gray-800 py-8 px-4">
         <div className="max-w-5xl mx-auto">
-          <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-6">
+          <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-6 tracking-tight">
             Find Your Perfect <span className="gradient-text">Internship</span>
           </h1>
           <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-3">
@@ -188,7 +188,7 @@ export default function BrowseInternships() {
                 className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div>
-                    <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 block">Work Type</label>
+                    <label className="text-xs font-semibold text-gray-500 mb-1 block">Work Type</label>
                     <select value={filters.remote} onChange={e => setFilters({ ...filters, remote: e.target.value })} className="input text-sm py-2">
                       <option value="">All</option>
                       <option value="remote">Remote</option>
@@ -196,7 +196,7 @@ export default function BrowseInternships() {
                     </select>
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 block">Sort By</label>
+                    <label className="text-xs font-semibold text-gray-500 mb-1 block">Sort By</label>
                     <select value={filters.sort} onChange={e => setFilters({ ...filters, sort: e.target.value })} className="input text-sm py-2">
                       <option value="latest">Latest</option>
                       <option value="relevant">Most Relevant</option>
@@ -208,15 +208,13 @@ export default function BrowseInternships() {
                     </button>
                   </div>
                   <div className="flex items-end">
-                    <button onClick={() => fetchInternships({ keyword: search.keyword, location: search.location })}
-                      className="btn-primary text-sm py-2 w-full">Apply Filters</button>
+                    <button onClick={() => fetchInternships({ keyword: search.keyword, location: search.location })} className="btn-primary text-sm py-2 w-full">Apply</button>
                   </div>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* Active search indicators */}
           {(search.location || search.keyword || activeDomain !== 'All') && (
             <div className="flex items-center gap-2 mt-3 flex-wrap">
               <span className="text-xs text-gray-500">Active filters:</span>
@@ -251,16 +249,14 @@ export default function BrowseInternships() {
       </div>
 
       <div className="max-w-5xl mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-6">
-          <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
-            {loading ? 'Searching...' : `${internships.length} internship${internships.length !== 1 ? 's' : ''} found${search.location ? ` in "${search.location}"` : ''}`}
-          </p>
-        </div>
+        <p className="text-gray-500 dark:text-gray-400 text-sm font-medium mb-6">
+          {loading ? 'Searching...' : `${internships.length} internship${internships.length !== 1 ? 's' : ''} found${search.location ? ` in "${search.location}"` : ''}`}
+        </p>
 
         {loading ? (
           <div className="grid md:grid-cols-2 gap-4">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="card animate-pulse">
+              <div key={i} className="bg-white dark:bg-[#111827] rounded-2xl border border-gray-100 dark:border-gray-800 p-6 animate-pulse">
                 <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-3" />
                 <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded w-1/2 mb-4" />
                 <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded w-full mb-2" />
@@ -268,11 +264,11 @@ export default function BrowseInternships() {
             ))}
           </div>
         ) : internships.length === 0 ? (
-          <div className="text-center py-20">
+          <div className="text-center py-20 bg-white dark:bg-[#111827] rounded-2xl border border-gray-100 dark:border-gray-800">
             <Briefcase className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
             <h3 className="text-xl font-bold text-gray-700 dark:text-gray-300 mb-2">No internships found</h3>
             <p className="text-gray-500 dark:text-gray-400 mb-6">
-              {search.location ? `No internships found in "${search.location}". Try a different city or clear the location filter.` : 'Try different keywords or clear your filters'}
+              {search.location ? `No internships found in "${search.location}". Try a different city.` : 'Try different keywords or clear filters'}
             </p>
             <button onClick={clearAll} className="btn-primary">Clear All Filters</button>
           </div>
@@ -280,10 +276,11 @@ export default function BrowseInternships() {
           <div className="grid md:grid-cols-2 gap-4">
             {internships.map((internship, i) => (
               <motion.div key={internship.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }} className="card hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+                transition={{ delay: i * 0.05 }}
+                className="bg-white dark:bg-[#111827] rounded-2xl border border-gray-100 dark:border-gray-800 p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
 
                 {aiMode && internship.matchPercent !== undefined && (
-                  <div className={`mb-3 flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg w-fit ${internship.matchPercent >= 70 ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400' : internship.matchPercent >= 30 ? 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400' : 'bg-gray-100 dark:bg-gray-700 text-gray-500'}`}>
+                  <div className={`mb-3 flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg w-fit ${internship.matchPercent >= 70 ? 'bg-green-50 dark:bg-green-900/20 text-green-600' : internship.matchPercent >= 30 ? 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600' : 'bg-gray-100 dark:bg-gray-700 text-gray-500'}`}>
                     <Zap className="w-3 h-3" />
                     {internship.matchPercent > 0 ? `${internship.matchPercent}% match` : 'Low match'}
                   </div>
@@ -311,7 +308,7 @@ export default function BrowseInternships() {
                 <div className="flex flex-wrap gap-2 mb-4">
                   {internship.domain && <span className="badge-blue badge">{internship.domain}</span>}
                   {internship.location && (
-                    <span className={`badge flex items-center gap-1 ${internship.location.toLowerCase().includes('remote') ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'}`}>
+                    <span className={`badge flex items-center gap-1 ${internship.location.toLowerCase().includes('remote') ? 'bg-green-50 dark:bg-green-900/20 text-green-600' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'}`}>
                       <MapPin className="w-3 h-3" />{internship.location}
                     </span>
                   )}
@@ -329,9 +326,9 @@ export default function BrowseInternships() {
                   </div>
                 )}
 
-                <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-700">
+                <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-800">
                   <div>
-                    {internship.stipend && <span className="text-sm font-semibold text-green-600 dark:text-green-400">{internship.stipend}</span>}
+                    {internship.stipend && <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">{internship.stipend}</span>}
                     {internship.deadline && <p className="text-xs text-gray-400 mt-0.5">Deadline: {new Date(internship.deadline).toLocaleDateString('en-IN')}</p>}
                   </div>
                   <div className="flex items-center gap-2">
@@ -350,27 +347,106 @@ export default function BrowseInternships() {
         )}
       </div>
 
+      {/* Apply Modal — with full company details */}
       {showModal && selectedInternship && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">{selectedInternship.companyName?.charAt(0)}</div>
-              <div>
-                <h3 className="font-bold text-gray-900 dark:text-white">{selectedInternship.title}</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{selectedInternship.companyName}</p>
+            className="bg-white dark:bg-[#111827] rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+
+            {/* Header */}
+            <div className="p-6 border-b border-gray-100 dark:border-gray-800">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-sm">
+                    {selectedInternship.companyName?.charAt(0)}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 dark:text-white text-xl">{selectedInternship.title}</h3>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-gray-500 dark:text-gray-400 text-sm flex items-center gap-1">
+                        <Building2 className="w-3.5 h-3.5" /> {selectedInternship.companyName}
+                      </span>
+                      {selectedInternship.companyVerified && (
+                        <span className="badge-green badge text-xs flex items-center gap-1">
+                          <Shield className="w-3 h-3" /> Verified
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <button onClick={() => setShowModal(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors">
+                  <X className="w-5 h-5 text-gray-400" />
+                </button>
               </div>
             </div>
-            <div className="mb-4">
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Cover Letter <span className="text-gray-400 font-normal">(optional)</span></label>
-              <textarea value={coverLetter} onChange={e => setCoverLetter(e.target.value)}
-                placeholder="Tell the company why you're a great fit..." rows={5} className="input resize-none" />
+
+            {/* Company & Internship Details */}
+            <div className="p-6 border-b border-gray-100 dark:border-gray-800">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-4">Internship Details</p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                {selectedInternship.location && (
+                  <div className="bg-gray-50 dark:bg-gray-800/60 rounded-xl p-3">
+                    <div className="flex items-center gap-1 text-xs text-gray-400 mb-1"><MapPin className="w-3 h-3" /> Location</div>
+                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">{selectedInternship.location}</p>
+                  </div>
+                )}
+                {selectedInternship.stipend && (
+                  <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl p-3">
+                    <div className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 mb-1"><DollarSign className="w-3 h-3" /> Stipend</div>
+                    <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">{selectedInternship.stipend}</p>
+                  </div>
+                )}
+                {selectedInternship.duration && (
+                  <div className="bg-gray-50 dark:bg-gray-800/60 rounded-xl p-3">
+                    <div className="flex items-center gap-1 text-xs text-gray-400 mb-1"><Clock className="w-3 h-3" /> Duration</div>
+                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">{selectedInternship.duration}</p>
+                  </div>
+                )}
+                {selectedInternship.deadline && (
+                  <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-3">
+                    <div className="flex items-center gap-1 text-xs text-amber-600 mb-1"><Calendar className="w-3 h-3" /> Deadline</div>
+                    <p className="text-sm font-semibold text-amber-700 dark:text-amber-300">{new Date(selectedInternship.deadline).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                  </div>
+                )}
+              </div>
+
+              {selectedInternship.skillsRequired && (
+                <div className="mb-4">
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Required Skills</p>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedInternship.skillsRequired.split(',').map(skill => (
+                      <span key={skill} className="text-xs px-2.5 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg font-medium border border-blue-100 dark:border-blue-800">{skill.trim()}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {selectedInternship.description && (
+                <div>
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">About This Role</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed bg-gray-50 dark:bg-gray-800/50 p-3 rounded-xl">{selectedInternship.description}</p>
+                </div>
+              )}
             </div>
-            <div className="flex gap-3">
-              <button onClick={() => setShowModal(false)} className="btn-secondary flex-1">Cancel</button>
-              <button onClick={handleApply} disabled={applying === selectedInternship.id} className="btn-primary flex-1 flex items-center justify-center gap-2">
-                {applying === selectedInternship.id ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Submit Application'}
-              </button>
+
+            {/* Cover Letter */}
+            <div className="p-6">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                <FileText className="w-4 h-4 text-blue-600" />
+                Cover Letter <span className="text-gray-400 font-normal text-xs">(optional but recommended)</span>
+              </label>
+              <textarea value={coverLetter} onChange={e => setCoverLetter(e.target.value)}
+                placeholder={`Dear ${selectedInternship.companyName} Team,\n\nI am excited to apply for the ${selectedInternship.title} position...`}
+                rows={5} className="input resize-none mb-4" />
+              <div className="flex gap-3">
+                <button onClick={() => setShowModal(false)} className="btn-secondary flex-1">Cancel</button>
+                <button onClick={handleApply} disabled={applying === selectedInternship.id}
+                  className="btn-primary flex-1 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20">
+                  {applying === selectedInternship.id
+                    ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    : <><ArrowRight className="w-4 h-4" /> Submit Application</>}
+                </button>
+              </div>
             </div>
           </motion.div>
         </div>
