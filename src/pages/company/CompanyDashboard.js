@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Briefcase, Eye, XCircle, Plus, TrendingUp, AlertTriangle, Users, MapPin, Clock, Code} from 'lucide-react';
+import { Briefcase, Eye, XCircle, Plus, TrendingUp, AlertTriangle, Users, MapPin, Clock, Code } from 'lucide-react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import Navbar from '../../components/Navbar';
 import { useAuth } from '../../context/AuthContext';
 import { getCompanyInternships, closeInternship } from '../../api/internships';
+import api from '../../api/axios';
 
 const fadeUp = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } };
 const stagger = { show: { transition: { staggerChildren: 0.07 } } };
@@ -13,12 +14,30 @@ const stagger = { show: { transition: { staggerChildren: 0.07 } } };
 export default function CompanyDashboard() {
   const { user } = useAuth();
   const [internships, setInternships] = useState([]);
+  const [appCounts, setAppCounts] = useState({});
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState('grid'); // grid | table
+  const [view, setView] = useState('grid');
 
   useEffect(() => {
     getCompanyInternships()
-      .then(res => setInternships(res.data.data || []))
+      .then(async (res) => {
+        const list = res.data.data || [];
+        setInternships(list);
+
+        // Fetch application counts in parallel
+        const counts = {};
+        await Promise.all(
+          list.map(async (internship) => {
+            try {
+              const r = await api.get(`/company/internships/${internship.id}/applications`);
+              counts[internship.id] = (r.data.data || []).length;
+            } catch {
+              counts[internship.id] = 0;
+            }
+          })
+        );
+        setAppCounts(counts);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
@@ -33,12 +52,13 @@ export default function CompanyDashboard() {
 
   const openCount = internships.filter(i => i.status === 'open').length;
   const closedCount = internships.filter(i => i.status === 'closed').length;
+  const totalApps = Object.values(appCounts).reduce((a, b) => a + b, 0);
 
   const stats = [
-    { label: 'Total Listings', value: internships.length, icon: Briefcase,    color: 'text-blue-600',   bg: 'bg-blue-50 dark:bg-blue-900/20',   border: 'border-blue-100 dark:border-blue-900/40' },
-    { label: 'Open',           value: openCount,           icon: TrendingUp,   color: 'text-emerald-600',bg: 'bg-emerald-50 dark:bg-emerald-900/20', border: 'border-emerald-100 dark:border-emerald-900/40' },
-    { label: 'Closed',         value: closedCount,         icon: XCircle,      color: 'text-red-500',    bg: 'bg-red-50 dark:bg-red-900/20',     border: 'border-red-100 dark:border-red-900/40' },
-    { label: 'Find Candidates',value: '→',                 icon: Users,        color: 'text-violet-600', bg: 'bg-violet-50 dark:bg-violet-900/20', border: 'border-violet-100 dark:border-violet-900/40', link: '/company/candidates' },
+    { label: 'Total Listings', value: internships.length, icon: Briefcase,   color: 'text-blue-600',    bg: 'bg-blue-50 dark:bg-blue-900/20',    border: 'border-blue-100 dark:border-blue-900/40' },
+    { label: 'Open',           value: openCount,          icon: TrendingUp,  color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-900/20', border: 'border-emerald-100 dark:border-emerald-900/40' },
+    { label: 'Total Applications', value: totalApps,      icon: Users,       color: 'text-violet-600',  bg: 'bg-violet-50 dark:bg-violet-900/20',  border: 'border-violet-100 dark:border-violet-900/40' },
+    { label: 'Find Candidates', value: '→',               icon: Users,       color: 'text-amber-600',   bg: 'bg-amber-50 dark:bg-amber-900/20',   border: 'border-amber-100 dark:border-amber-900/40', link: '/company/candidates' },
   ];
 
   if (loading) return (
@@ -156,6 +176,11 @@ export default function CompanyDashboard() {
                         </div>
                         {internship.domain && <span className="badge-blue badge text-xs">{internship.domain}</span>}
                       </div>
+                      {/* Application count badge */}
+                      <div className="flex items-center gap-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-2.5 py-1 rounded-lg text-xs font-bold flex-shrink-0 ml-2">
+                        <Users className="w-3 h-3" />
+                        {appCounts[internship.id] ?? '—'}
+                      </div>
                     </div>
 
                     <div className="space-y-1.5 mb-4">
@@ -203,7 +228,7 @@ export default function CompanyDashboard() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-gray-100 dark:border-gray-800">
-                      {['Position', 'Domain', 'Location', 'Status', 'Deadline', 'Actions'].map(h => (
+                      {['Position', 'Domain', 'Location', 'Status', 'Applications', 'Deadline', 'Actions'].map(h => (
                         <th key={h} className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wider pb-3 pr-4">{h}</th>
                       ))}
                     </tr>
@@ -222,6 +247,12 @@ export default function CompanyDashboard() {
                         <td className="py-4 pr-4">
                           <span className={`badge ${internship.status === 'open' ? 'badge-green' : 'badge-red'}`}>
                             {internship.status === 'open' ? '● Open' : '● Closed'}
+                          </span>
+                        </td>
+                        <td className="py-4 pr-4">
+                          <span className="flex items-center gap-1 text-sm font-bold text-violet-600 dark:text-violet-400">
+                            <Users className="w-3.5 h-3.5" />
+                            {appCounts[internship.id] ?? '—'}
                           </span>
                         </td>
                         <td className="py-4 pr-4">
