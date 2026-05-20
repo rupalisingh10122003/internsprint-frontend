@@ -20,6 +20,7 @@ import CompanyDashboard from './pages/company/CompanyDashboard';
 import PostInternship from './pages/company/PostInternship';
 import ManageApplications from './pages/company/ManageApplications';
 import FindCandidates from './pages/company/FindCandidates';
+import CompanyProfile from './pages/company/CompanyProfile';
 
 import AdminDashboard from './pages/admin/AdminDashboard';
 
@@ -58,6 +59,7 @@ const AppRoutes = () => {
       <Route path="/company/post" element={<ProtectedRoute role="company"><PostInternship /></ProtectedRoute>} />
       <Route path="/company/applications/:id" element={<ProtectedRoute role="company"><ManageApplications /></ProtectedRoute>} />
       <Route path="/company/candidates" element={<ProtectedRoute role="company"><FindCandidates /></ProtectedRoute>} />
+      <Route path="/company/profile" element={<ProtectedRoute role="company"><CompanyProfile /></ProtectedRoute>} />
 
       {/* Admin routes */}
       <Route path="/admin" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />

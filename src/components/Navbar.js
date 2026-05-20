@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Moon, Sun, Menu, X, Zap} from 'lucide-react';
+import { Moon, Sun, Menu, X, Zap } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 
@@ -27,6 +27,7 @@ export default function Navbar() {
       { to: '/company', label: 'Dashboard' },
       { to: '/company/post', label: 'Post Internship' },
       { to: '/company/candidates', label: 'Find Candidates' },
+      { to: '/company/profile', label: 'Company Profile' },
     ];
     if (user.role === 'admin') return [
       { to: '/admin', label: 'Admin Panel' },
@@ -66,7 +67,6 @@ export default function Navbar() {
 
           {/* Right side */}
           <div className="flex items-center gap-2">
-            {/* Theme toggle */}
             <button onClick={toggleTheme}
               className="p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-150">
               {isDark ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
@@ -95,7 +95,6 @@ export default function Navbar() {
               </div>
             )}
 
-            {/* Mobile toggle */}
             <button className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
               onClick={() => setMenuOpen(!menuOpen)}>
               {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
