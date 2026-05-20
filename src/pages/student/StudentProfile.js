@@ -9,6 +9,15 @@ import api from '../../api/axios';
 
 const skillSuggestions = ['Java', 'Python', 'React', 'Node.js', 'MySQL', 'MongoDB', 'Spring Boot', 'Machine Learning', 'TensorFlow', 'Figma', 'Adobe XD', 'SEO', 'Git', 'Docker', 'AWS'];
 
+const getViewUrl = (url) => {
+  if (!url) return '#';
+  // Cloudinary raw files & Google Drive need viewer wrapper
+  if (url.includes('cloudinary.com') || url.includes('drive.google.com') || url.includes('dropbox.com')) {
+    return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}`;
+  }
+  return url;
+};
+
 export default function StudentProfile() {
   const { user } = useAuth();
   const [profile, setProfile] = useState({
@@ -62,7 +71,7 @@ export default function StudentProfile() {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      const res = await api.post('/api/student/resume/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const res = await api.post('/student/resume/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       setProfile(prev => ({ ...prev, resumeUrl: res.data.data }));
       toast.success('Resume uploaded successfully!');
     } catch {
@@ -111,8 +120,6 @@ export default function StudentProfile() {
 
           {/* Left Sidebar */}
           <div className="space-y-5">
-
-            {/* Avatar card */}
             <div className="bg-white dark:bg-[#111827] rounded-2xl border border-gray-100 dark:border-gray-800 p-6 text-center">
               <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center text-white font-bold text-3xl mx-auto mb-4 shadow-lg shadow-blue-500/20">
                 {user?.name?.charAt(0)}
@@ -122,7 +129,6 @@ export default function StudentProfile() {
               <span className="badge-blue badge mt-3">Student</span>
             </div>
 
-            {/* Profile strength */}
             <div className="bg-white dark:bg-[#111827] rounded-2xl border border-gray-100 dark:border-gray-800 p-5">
               <div className="flex items-center gap-2 mb-4">
                 <Zap className="w-4 h-4 text-blue-600" />
@@ -165,27 +171,27 @@ export default function StudentProfile() {
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">College</label>
-                  <input value={profile.college || ''} onChange={e => setProfile({ ...profile, college: e.target.value })} placeholder="Bharati Vidyapeeth..." className="input" />
+                  <input value={profile.college || ''} onChange={e => setProfile({ ...profile, college: e.target.value })} placeholder="Bharati Vidyapeeth..." className="input-field" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Degree</label>
-                  <input value={profile.degree || ''} onChange={e => setProfile({ ...profile, degree: e.target.value })} placeholder="B.E. Computer Engineering" className="input" />
+                  <input value={profile.degree || ''} onChange={e => setProfile({ ...profile, degree: e.target.value })} placeholder="B.E. Computer Engineering" className="input-field" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Year of Study</label>
-                  <select value={profile.year || ''} onChange={e => setProfile({ ...profile, year: e.target.value })} className="input">
+                  <select value={profile.year || ''} onChange={e => setProfile({ ...profile, year: e.target.value })} className="input-field">
                     <option value="">Select year</option>
                     {[1, 2, 3, 4].map(y => <option key={y} value={y}>Year {y}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">CGPA</label>
-                  <input type="number" step="0.01" min="0" max="10" value={profile.cgpa || ''} onChange={e => setProfile({ ...profile, cgpa: e.target.value })} placeholder="8.5" className="input" />
+                  <input type="number" step="0.01" min="0" max="10" value={profile.cgpa || ''} onChange={e => setProfile({ ...profile, cgpa: e.target.value })} placeholder="8.5" className="input-field" />
                 </div>
               </div>
               <div className="mt-4">
                 <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Bio</label>
-                <textarea value={profile.bio || ''} onChange={e => setProfile({ ...profile, bio: e.target.value })} placeholder="Tell companies about yourself..." rows={3} className="input resize-none" />
+                <textarea value={profile.bio || ''} onChange={e => setProfile({ ...profile, bio: e.target.value })} placeholder="Tell companies about yourself..." rows={3} className="input-field resize-none" />
               </div>
             </div>
 
@@ -200,7 +206,7 @@ export default function StudentProfile() {
               <div className="flex gap-2 mb-4">
                 <input value={skillInput} onChange={e => setSkillInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addSkill(skillInput))}
-                  placeholder="Type a skill and press Enter..." className="input flex-1" />
+                  placeholder="Type a skill and press Enter..." className="input-field flex-1" />
                 <button onClick={() => addSkill(skillInput)} className="btn-primary px-5">Add</button>
               </div>
               {skillList.length > 0 && (
@@ -236,7 +242,7 @@ export default function StudentProfile() {
               </div>
               <textarea value={profile.projects || ''} onChange={e => setProfile({ ...profile, projects: e.target.value })}
                 placeholder={`InternSprint | React, Spring Boot, MySQL | Full-stack internship platform with AI matching\nPortfolio Website | HTML, CSS, JS | Personal portfolio with dark mode`}
-                rows={4} className="input resize-none" />
+                rows={4} className="input-field resize-none" />
               <p className="text-xs text-gray-400 mt-2">One project per line — Name | Tech Stack | Description</p>
             </div>
 
@@ -250,7 +256,7 @@ export default function StudentProfile() {
               </div>
               <textarea value={profile.certifications || ''} onChange={e => setProfile({ ...profile, certifications: e.target.value })}
                 placeholder={`AWS Cloud Practitioner - Amazon - 2025\nReact Developer Certification - Meta - 2024`}
-                rows={3} className="input resize-none" />
+                rows={3} className="input-field resize-none" />
               <p className="text-xs text-gray-400 mt-2">One per line — Name - Issuer - Year</p>
             </div>
 
@@ -265,11 +271,11 @@ export default function StudentProfile() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">LinkedIn URL</label>
-                  <input value={profile.linkedin || ''} onChange={e => setProfile({ ...profile, linkedin: e.target.value })} placeholder="https://linkedin.com/in/yourname" className="input" />
+                  <input value={profile.linkedin || ''} onChange={e => setProfile({ ...profile, linkedin: e.target.value })} placeholder="https://linkedin.com/in/yourname" className="input-field" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">GitHub URL</label>
-                  <input value={profile.github || ''} onChange={e => setProfile({ ...profile, github: e.target.value })} placeholder="https://github.com/yourname" className="input" />
+                  <input value={profile.github || ''} onChange={e => setProfile({ ...profile, github: e.target.value })} placeholder="https://github.com/yourname" className="input-field" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Resume (PDF)</label>
@@ -279,17 +285,28 @@ export default function StudentProfile() {
                       : <><Upload className="w-4 h-4" /> Upload PDF (max 5MB)</>}
                     <input type="file" accept=".pdf" onChange={handleResumeUpload} className="hidden" disabled={uploading} />
                   </label>
+
                   {profile.resumeUrl && (
                     <div className="flex items-center gap-2 p-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 rounded-xl mb-3">
                       <CheckCircle className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                      <a href={profile.resumeUrl} target="_blank" rel="noopener noreferrer"
-                        className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline font-medium flex items-center gap-1 flex-1 truncate">
-                        Resume uploaded — Click to view <ExternalLink className="w-3 h-3 flex-shrink-0" />
-                      </a>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold mb-0.5">Resume uploaded</p>
+                        <div className="flex gap-3">
+                          <a href={getViewUrl(profile.resumeUrl)} target="_blank" rel="noopener noreferrer"
+                            className="text-xs text-blue-600 dark:text-blue-400 hover:underline font-medium flex items-center gap-1">
+                            <ExternalLink className="w-3 h-3" /> View in browser
+                          </a>
+                          <a href={profile.resumeUrl} download target="_blank" rel="noopener noreferrer"
+                            className="text-xs text-gray-500 dark:text-gray-400 hover:underline font-medium flex items-center gap-1">
+                            ↓ Download
+                          </a>
+                        </div>
+                      </div>
                     </div>
                   )}
-                  <p className="text-xs text-gray-400 mb-1.5">Or paste a URL (Google Drive, Dropbox)</p>
-                  <input value={profile.resumeUrl || ''} onChange={e => setProfile({ ...profile, resumeUrl: e.target.value })} placeholder="https://drive.google.com/..." className="input" />
+
+                  <p className="text-xs text-gray-400 mb-1.5">Or paste a URL (Google Drive, Dropbox, Cloudinary)</p>
+                  <input value={profile.resumeUrl || ''} onChange={e => setProfile({ ...profile, resumeUrl: e.target.value })} placeholder="https://drive.google.com/..." className="input-field" />
                 </div>
               </div>
             </div>
