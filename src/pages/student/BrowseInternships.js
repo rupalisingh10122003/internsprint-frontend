@@ -55,7 +55,10 @@ export default function BrowseInternships() {
           (i.description ? 1 : 0) + (i.skillsRequired ? 1 : 0) + (i.deadline ? 1 : 0);
         return score(b) - score(a);
       });
-}
+    }
+    return filtered;
+  };
+
   useEffect(() => {
     fetchInternships(); // eslint-disable-line react-hooks/exhaustive-deps
     getSavedInternships().then(res => {
