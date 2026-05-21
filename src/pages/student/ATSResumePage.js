@@ -126,20 +126,6 @@ export default function ATSResumePage() {
       const maxW = pw - margin * 2;
       let y = 20;
 
-      const addText = (text, fontSize, isBold, color = [30, 30, 30], align = 'left', x = margin) => {
-        doc.setFontSize(fontSize);
-        doc.setFont('helvetica', isBold ? 'bold' : 'normal');
-        doc.setTextColor(...color);
-        if (align === 'center') {
-          doc.text(text, pw / 2, y, { align: 'center' });
-        } else {
-          const lines = doc.splitTextToSize(text, maxW);
-          doc.text(lines, x, y);
-          return lines.length;
-        }
-        return 1;
-      };
-
       const checkPage = (needed = 10) => {
         if (y + needed > 280) { doc.addPage(); y = 20; }
       };

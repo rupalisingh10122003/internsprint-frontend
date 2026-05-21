@@ -51,7 +51,6 @@ export default function CompanyDashboard() {
   };
 
   const openCount = internships.filter(i => i.status === 'open').length;
-  const closedCount = internships.filter(i => i.status === 'closed').length;
   const totalApps = Object.values(appCounts).reduce((a, b) => a + b, 0);
 
   const stats = [
