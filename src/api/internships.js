@@ -3,42 +3,32 @@ import api from './axios';
 
 export const searchInternships = (params) =>
   api.get('/api/internships/search', { params });
-
 export const getInternshipById = (id) =>
   api.get(`/api/internships/${id}`);
 
 // Student
 export const applyToInternship = (internshipId, data) =>
   api.post(`/api/student/apply/${internshipId}`, data);
-
 export const getMyApplications = () =>
   api.get('/api/student/applications');
-
 export const getStudentProfile = () =>
   api.get('/api/student/profile');
-
 export const updateStudentProfile = (data) =>
   api.put('/api/student/profile', data);
-
 export const getNotifications = () =>
   api.get('/api/student/notifications');
-
 export const markNotificationsRead = () =>
   api.put('/api/student/notifications/read');
 
 // Company
 export const postInternship = (data) =>
   api.post('/api/company/internships', data);
-
 export const getCompanyInternships = () =>
   api.get('/api/company/internships');
-
 export const closeInternship = (id) =>
   api.put(`/api/company/internships/${id}/close`);
-
 export const getInternshipApplications = (id) =>
   api.get(`/api/company/internships/${id}/applications`);
-
 export const updateApplicationStatus = (id, status) =>
   api.put(`/api/company/applications/${id}/status`, null, { params: { status } });
 
@@ -50,12 +40,22 @@ export const verifyCompany = (id) => api.put(`/api/admin/companies/${id}/verify`
 export const unverifyCompany = (id) => api.put(`/api/admin/companies/${id}/unverify`);
 export const deleteInternshipAdmin = (id) => api.delete(`/api/admin/internships/${id}`);
 export const deactivateUser = (id) => api.put(`/api/admin/users/${id}/deactivate`);
-// AI Module
+
+// AI Module — 60s timeout for cold start on Render free tier
+const AI_BASE = 'https://internsprint-ai.onrender.com';
+const aiClient = axios.create({
+  baseURL: AI_BASE,
+  timeout: 60000,
+});
+
 export const getAIMatches = (skills) =>
-  axios.post('https://internsprint-ai.onrender.com/api/match', { skills });
+  aiClient.post('/api/match', { skills });
 
 export const getSkillGap = (studentSkills, requiredSkills) =>
-  axios.post('https://internsprint-ai.onrender.com/api/skillgap', { studentSkills, requiredSkills });
+  aiClient.post('/api/skillgap', { studentSkills, requiredSkills });
+
+export const findMatchingStudents = (requiredSkills) =>
+  aiClient.post('/api/match/students', { requiredSkills });
 
 // Save/Unsave internship
 export const saveInternship = (id) => api.post(`/api/student/save/${id}`);
@@ -64,8 +64,3 @@ export const getSavedInternships = () => api.get('/api/student/saved');
 
 // Withdraw application
 export const withdrawApplication = (id) => api.delete(`/api/student/applications/${id}/withdraw`);
-
-// Company AI matching
-export const findMatchingStudents = (requiredSkills) =>
-  axios.post('https://internsprint-ai.onrender.com/api/match/students', { requiredSkills });
-
