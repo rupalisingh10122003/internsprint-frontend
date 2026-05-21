@@ -46,10 +46,16 @@ export default function BrowseInternships() {
     let filtered = [...data];
     if (filters.remote === 'remote') filtered = filtered.filter(i => i.location?.toLowerCase().includes('remote'));
     if (filters.remote === 'onsite') filtered = filtered.filter(i => !i.location?.toLowerCase().includes('remote'));
-    if (filters.sort === 'latest') filtered.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-    return filtered;
-  };
-
+    if (filters.sort === 'latest') {
+      filtered.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    } else if (filters.sort === 'relevant') {
+      filtered.sort((a, b) => {
+        const score = (i) =>
+          (i.companyVerified ? 3 : 0) + (i.stipend ? 2 : 0) +
+          (i.description ? 1 : 0) + (i.skillsRequired ? 1 : 0) + (i.deadline ? 1 : 0);
+        return score(b) - score(a);
+      });
+}
   useEffect(() => {
     fetchInternships(); // eslint-disable-line react-hooks/exhaustive-deps
     getSavedInternships().then(res => {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Briefcase, Clock, CheckCircle, XCircle, Calendar, Building2, Trash2} from 'lucide-react';
+import { Briefcase, Clock, CheckCircle, XCircle, Calendar, Building2, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import Navbar from '../../components/Navbar';
@@ -46,13 +46,12 @@ export default function MyApplications() {
   const filtered = filter === 'all' ? applications : applications.filter(a => a.status === filter);
 
   const counts = {
-    all: applications.length,
-    applied: applications.filter(a => a.status === 'applied').length,
-    under_review: applications.filter(a => a.status === 'under_review').length,
-    shortlisted: applications.filter(a => a.status === 'shortlisted').length,
+    applied:             applications.filter(a => a.status === 'applied').length,
+    under_review:        applications.filter(a => a.status === 'under_review').length,
+    shortlisted:         applications.filter(a => a.status === 'shortlisted').length,
     interview_scheduled: applications.filter(a => a.status === 'interview_scheduled').length,
-    accepted: applications.filter(a => a.status === 'accepted').length,
-    rejected: applications.filter(a => a.status === 'rejected').length,
+    accepted:            applications.filter(a => a.status === 'accepted').length,
+    rejected:            applications.filter(a => a.status === 'rejected').length,
   };
 
   if (loading) return (
@@ -69,47 +68,43 @@ export default function MyApplications() {
         {/* Header */}
         <div className="mb-8">
           <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">Track your journey</p>
-          <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">My Applications</h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">My Applications</h1>
+            {filter !== 'all' && (
+              <button onClick={() => setFilter('all')}
+                className="text-sm text-blue-600 dark:text-blue-400 font-medium hover:underline">
+                ← Show All ({applications.length})
+              </button>
+            )}
+          </div>
         </div>
 
-        {/* Summary stats */}
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mb-6">
+        {/* Stat cards — click to filter, click again to clear */}
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mb-8">
           {[
-            { key: 'applied', label: 'Applied', color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/20' },
-            { key: 'under_review', label: 'In Review', color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/20' },
-            { key: 'shortlisted', label: 'Shortlisted', color: 'text-violet-600', bg: 'bg-violet-50 dark:bg-violet-900/20' },
-            { key: 'interview_scheduled', label: 'Interview', color: 'text-cyan-600', bg: 'bg-cyan-50 dark:bg-cyan-900/20' },
-            { key: 'accepted', label: 'Accepted', color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-900/20' },
-            { key: 'rejected', label: 'Rejected', color: 'text-red-500', bg: 'bg-red-50 dark:bg-red-900/20' },
-          ].map(({ key, label, color, bg }) => (
+            { key: 'applied',             label: 'Applied',     color: 'text-amber-600',   bg: 'bg-amber-50 dark:bg-amber-900/20',   ring: 'ring-amber-400' },
+            { key: 'under_review',        label: 'In Review',   color: 'text-blue-600',    bg: 'bg-blue-50 dark:bg-blue-900/20',     ring: 'ring-blue-400' },
+            { key: 'shortlisted',         label: 'Shortlisted', color: 'text-violet-600',  bg: 'bg-violet-50 dark:bg-violet-900/20', ring: 'ring-violet-400' },
+            { key: 'interview_scheduled', label: 'Interview',   color: 'text-cyan-600',    bg: 'bg-cyan-50 dark:bg-cyan-900/20',     ring: 'ring-cyan-400' },
+            { key: 'accepted',            label: 'Accepted',    color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-900/20', ring: 'ring-emerald-400' },
+            { key: 'rejected',            label: 'Rejected',    color: 'text-red-500',     bg: 'bg-red-50 dark:bg-red-900/20',       ring: 'ring-red-400' },
+          ].map(({ key, label, color, bg, ring }) => (
             <button key={key} onClick={() => setFilter(filter === key ? 'all' : key)}
-              className={`${bg} rounded-2xl p-3 text-center border transition-all hover:shadow-sm ${filter === key ? 'ring-2 ring-blue-500 border-blue-200 dark:border-blue-700' : 'border-transparent'}`}>
-              <div className={`text-xl font-extrabold ${color}`}>{counts[key]}</div>
+              className={`${bg} rounded-2xl p-3 text-center border-2 transition-all hover:shadow-sm ${
+                filter === key ? `ring-2 ${ring} border-transparent scale-105 shadow-md` : 'border-transparent hover:scale-102'
+              }`}>
+              <div className={`text-2xl font-extrabold ${color}`}>{counts[key]}</div>
               <div className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-0.5">{label}</div>
             </button>
           ))}
         </div>
 
-        {/* Filter pills */}
-        <div className="flex gap-2 overflow-x-auto pb-2 mb-6">
-          {[
-            { key: 'all', label: 'All Applications' },
-            { key: 'applied', label: 'Applied' },
-            { key: 'under_review', label: 'Under Review' },
-            { key: 'shortlisted', label: 'Shortlisted' },
-            { key: 'interview_scheduled', label: 'Interview' },
-            { key: 'accepted', label: 'Accepted' },
-            { key: 'rejected', label: 'Rejected' },
-          ].map(({ key, label }) => (
-            <button key={key} onClick={() => setFilter(key)}
-              className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 flex items-center gap-1.5 ${filter === key ? 'bg-blue-600 text-white shadow-md' : 'bg-white dark:bg-[#111827] text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-blue-300'}`}>
-              {label}
-              <span className={`text-xs px-1.5 py-0.5 rounded-full ${filter === key ? 'bg-white/20 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-500'}`}>
-                {counts[key]}
-              </span>
-            </button>
-          ))}
-        </div>
+        {/* Results label */}
+        <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-4">
+          {filter === 'all'
+            ? `${applications.length} total application${applications.length !== 1 ? 's' : ''}`
+            : `${filtered.length} ${filter.replace(/_/g, ' ')} application${filtered.length !== 1 ? 's' : ''}`}
+        </p>
 
         {filtered.length === 0 ? (
           <div className="text-center py-20 bg-white dark:bg-[#111827] rounded-2xl border border-gray-100 dark:border-gray-800">
@@ -119,9 +114,12 @@ export default function MyApplications() {
             <h3 className="text-xl font-bold text-gray-700 dark:text-gray-300 mb-2">
               {filter === 'all' ? 'No applications yet' : `No ${filter.replace(/_/g, ' ')} applications`}
             </h3>
-            <p className="text-gray-400 dark:text-gray-500 text-sm">
+            <p className="text-gray-400 dark:text-gray-500 text-sm mb-4">
               {filter === 'all' ? 'Start applying to internships to see them here' : 'Try a different filter above'}
             </p>
+            {filter !== 'all' && (
+              <button onClick={() => setFilter('all')} className="btn-primary text-sm">Show All Applications</button>
+            )}
           </div>
         ) : (
           <div className="space-y-4">
@@ -174,7 +172,6 @@ export default function MyApplications() {
                     </div>
                   </div>
 
-                  {/* Progress pipeline */}
                   {app.status !== 'rejected' && (
                     <div className="mt-5 pt-4 border-t border-gray-100 dark:border-gray-800">
                       <div className="flex items-center">
