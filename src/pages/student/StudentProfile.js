@@ -9,10 +9,14 @@ import api from '../../api/axios';
 
 const skillSuggestions = ['Java', 'Python', 'React', 'Node.js', 'MySQL', 'MongoDB', 'Spring Boot', 'Machine Learning', 'TensorFlow', 'Figma', 'Adobe XD', 'SEO', 'Git', 'Docker', 'AWS'];
 
+// Fix Cloudinary raw PDFs — they serve as downloads by default
+// Adding fl_attachment:false forces browser-viewable mode
 const getViewUrl = (url) => {
   if (!url) return '#';
-  // Cloudinary raw files & Google Drive need viewer wrapper
-  if (url.includes('cloudinary.com') || url.includes('drive.google.com') || url.includes('dropbox.com')) {
+  if (url.includes('res.cloudinary.com') && url.includes('/raw/upload/')) {
+    return url.replace('/raw/upload/', '/raw/upload/fl_attachment:false/');
+  }
+  if (url.includes('drive.google.com') || url.includes('dropbox.com')) {
     return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}`;
   }
   return url;
@@ -73,7 +77,7 @@ export default function StudentProfile() {
       formData.append('file', file);
       const res = await api.post('/student/resume/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       setProfile(prev => ({ ...prev, resumeUrl: res.data.data }));
-      toast.success('Resume uploaded successfully!');
+      toast.success('Resume uploaded!');
     } catch {
       toast.error('Upload failed. Try pasting the URL instead.');
     } finally {
@@ -103,7 +107,6 @@ export default function StudentProfile() {
       <Navbar />
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
             <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">Your Profile</p>
@@ -117,8 +120,6 @@ export default function StudentProfile() {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
-
-          {/* Left Sidebar */}
           <div className="space-y-5">
             <div className="bg-white dark:bg-[#111827] rounded-2xl border border-gray-100 dark:border-gray-800 p-6 text-center">
               <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center text-white font-bold text-3xl mx-auto mb-4 shadow-lg shadow-blue-500/20">
@@ -157,9 +158,7 @@ export default function StudentProfile() {
             </div>
           </div>
 
-          {/* Right — Form */}
           <div className="lg:col-span-2 space-y-5">
-
             {/* Basic Info */}
             <div className="bg-white dark:bg-[#111827] rounded-2xl border border-gray-100 dark:border-gray-800 p-6">
               <div className="flex items-center gap-2 mb-5">
@@ -241,7 +240,7 @@ export default function StudentProfile() {
                 <h3 className="font-bold text-gray-900 dark:text-white">Projects</h3>
               </div>
               <textarea value={profile.projects || ''} onChange={e => setProfile({ ...profile, projects: e.target.value })}
-                placeholder={`InternSprint | React, Spring Boot, MySQL | Full-stack internship platform with AI matching\nPortfolio Website | HTML, CSS, JS | Personal portfolio with dark mode`}
+                placeholder={`InternSprint | React, Spring Boot, MySQL | Full-stack internship platform\nPortfolio | HTML, CSS, JS | Personal portfolio`}
                 rows={4} className="input-field resize-none" />
               <p className="text-xs text-gray-400 mt-2">One project per line — Name | Tech Stack | Description</p>
             </div>
@@ -287,17 +286,17 @@ export default function StudentProfile() {
                   </label>
 
                   {profile.resumeUrl && (
-                    <div className="flex items-center gap-2 p-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 rounded-xl mb-3">
+                    <div className="flex items-center gap-3 p-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 rounded-xl mb-3">
                       <CheckCircle className="w-4 h-4 text-emerald-600 flex-shrink-0" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold mb-0.5">Resume uploaded</p>
-                        <div className="flex gap-3">
+                        <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 mb-1">Resume uploaded ✓</p>
+                        <div className="flex gap-4">
                           <a href={getViewUrl(profile.resumeUrl)} target="_blank" rel="noopener noreferrer"
-                            className="text-xs text-blue-600 dark:text-blue-400 hover:underline font-medium flex items-center gap-1">
-                            <ExternalLink className="w-3 h-3" /> View in browser
+                            className="text-xs text-blue-600 dark:text-blue-400 hover:underline font-semibold flex items-center gap-1">
+                            <ExternalLink className="w-3 h-3" /> View PDF
                           </a>
                           <a href={profile.resumeUrl} download target="_blank" rel="noopener noreferrer"
-                            className="text-xs text-gray-500 dark:text-gray-400 hover:underline font-medium flex items-center gap-1">
+                            className="text-xs text-gray-500 dark:text-gray-400 hover:underline font-medium">
                             ↓ Download
                           </a>
                         </div>
@@ -310,7 +309,6 @@ export default function StudentProfile() {
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </div>

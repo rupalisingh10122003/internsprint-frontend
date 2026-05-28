@@ -497,7 +497,10 @@ export default function AdminDashboard() {
                     <div className="space-y-2 bg-purple-50 dark:bg-purple-900/10 rounded-xl p-4 mb-4 border border-purple-100 dark:border-purple-900/30">
                       <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide mb-3">Company Activity</p>
                       <p className="text-sm text-gray-600 dark:text-gray-300">
-                        Internships posted: <strong>{internships.filter(i => i.companyName === selectedUser.name).length}</strong>
+                        {(() => {
+                          const uc = companies.find(c => c.user?.id === selectedUser.id);
+                          return <div><p className="text-sm font-bold text-gray-800 dark:text-gray-100">{uc?.companyName || 'No company linked'}</p><p className="text-sm text-gray-600 dark:text-gray-300 mt-1">Internships: <strong>{internships.filter(i => uc && i.companyName === uc.companyName).length}</strong></p></div>;
+                        })()}                      
                       </p>
                     </div>
                   )}

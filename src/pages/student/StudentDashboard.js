@@ -136,34 +136,6 @@ export default function StudentDashboard() {
               )}
             </div>
 
-            {/* Application Progress */}
-            {applications.length > 0 && (
-              <div className="bg-white dark:bg-[#111827] rounded-2xl border border-gray-100 dark:border-gray-800 p-6">
-                <h2 className="text-base font-bold text-gray-900 dark:text-white mb-4">Application Pipeline</h2>
-                <div className="space-y-3">
-                  {Object.entries(statusConfig).map(([key, val]) => {
-                    const count = applications.filter(a => a.status === key).length;
-                    const pct = applications.length > 0 ? (count / applications.length) * 100 : 0;
-                    if (count === 0) return null;
-                    return (
-                      <div key={key}>
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{val.label}</span>
-                          <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{count}</span>
-                        </div>
-                        <div className="h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-                          <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }}
-                            transition={{ duration: 0.8, delay: 0.2 }}
-                            className="h-full bg-blue-600 rounded-full" />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-
           {/* Right Column */}
           <div className="space-y-5">
 
