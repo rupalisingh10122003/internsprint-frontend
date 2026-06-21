@@ -1,8 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900&display=swap');
 
 @layer base {
   :root {
@@ -11,127 +11,258 @@
     --shadow-md: 0 4px 16px rgba(0,0,0,.08), 0 2px 4px rgba(0,0,0,.04);
     --shadow-lg: 0 8px 32px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
     --shadow-xl: 0 20px 60px rgba(0,0,0,.15), 0 8px 16px rgba(0,0,0,.08);
+    /* Light mode colors */
+    --bg-primary: #F5F7FA;
+    --bg-card: #ffffff;
+    --bg-input: #ffffff;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --border: #e5e7eb;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
-
-  body {
-    @apply bg-[#F5F7FA] dark:bg-[#0A0F1E] text-gray-900 dark:text-gray-100;
-    font-family: 'Inter', system-ui, sans-serif;
-    transition: background-color 0.25s ease, color 0.25s ease;
-    letter-spacing: -0.01em;
-  }
-
-  /* Dark mode root */
   .dark {
     color-scheme: dark;
+    /* Dark mode colors */
+    --bg-primary: #0A0F1E;
+    --bg-card: #111827;
+    --bg-input: #1a2235;
+    --text-primary: #f3f4f6;
+    --text-secondary: #9ca3af;
+    --border: #1f2937;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Only body transitions — no global element transitions */
+  body {
+    @apply bg-[#F5F7FA] dark:bg-[#0A0F1E] text-gray-900 dark:text-gray-100;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.011em;
+    line-height: 1.6;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  /* Headings */
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-gray-900 dark:text-white;
+    line-height: 1.3;
+  }
+
+  /* Links */
+  a {
+    @apply text-inherit no-underline;
+  }
+
+  /* Remove default margins */
+  p, h1, h2, h3, h4, h5, h6, ul, ol, li, figure, blockquote {
+    margin: 0;
+    padding: 0;
   }
 }
 
 @layer components {
 
-  /* ─── Buttons ─── */
+  /* ── Buttons ───────────────────────────────────────────────── */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-2.5 px-5 rounded-xl transition-all duration-150 shadow-sm hover:shadow-md active:scale-[0.97] select-none cursor-pointer;
+    @apply inline-flex items-center justify-center gap-2
+           bg-blue-600 hover:bg-blue-700 active:bg-blue-800
+           text-white font-semibold
+           py-2.5 px-5 rounded-xl
+           shadow-sm hover:shadow-md
+           active:scale-[0.97]
+           select-none cursor-pointer;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
     letter-spacing: -0.01em;
   }
-  .btn-primary:disabled {
-    @apply opacity-60 cursor-not-allowed;
-  }
+  .btn-primary:disabled { @apply opacity-60 cursor-not-allowed pointer-events-none; }
+
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 font-semibold py-2.5 px-5 rounded-xl border border-gray-200 dark:border-gray-600 transition-all duration-150 active:scale-[0.97] select-none cursor-pointer;
+    @apply inline-flex items-center justify-center gap-2
+           bg-white dark:bg-gray-800
+           hover:bg-gray-50 dark:hover:bg-gray-750
+           text-gray-700 dark:text-gray-200
+           font-semibold
+           py-2.5 px-5 rounded-xl
+           border border-gray-200 dark:border-gray-700
+           active:scale-[0.97]
+           select-none cursor-pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
   }
-  .btn-secondary:disabled {
-    @apply opacity-60 cursor-not-allowed;
-  }
+  .btn-secondary:disabled { @apply opacity-60 cursor-not-allowed pointer-events-none; }
+
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white font-semibold py-2.5 px-5 rounded-xl transition-all duration-150 active:scale-[0.97] select-none cursor-pointer;
-  }
-  .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium py-2 px-4 rounded-xl transition-all duration-150 select-none cursor-pointer;
+    @apply inline-flex items-center justify-center gap-2
+           border-2 border-blue-600
+           text-blue-600 hover:bg-blue-600 hover:text-white
+           font-semibold
+           py-2.5 px-5 rounded-xl
+           active:scale-[0.97]
+           select-none cursor-pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
   }
 
-  /* ─── Card ─── */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2
+           text-gray-600 dark:text-gray-300
+           hover:bg-gray-100 dark:hover:bg-gray-800
+           font-medium py-2 px-4 rounded-xl
+           select-none cursor-pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  /* ── Cards ─────────────────────────────────────────────────── */
   .card {
-    @apply bg-white dark:bg-[#111827] rounded-2xl border border-gray-100 dark:border-gray-800 p-6;
+    @apply bg-white dark:bg-[#111827]
+           rounded-2xl
+           border border-gray-100 dark:border-gray-800
+           p-6;
     box-shadow: var(--shadow-sm);
     transition: box-shadow 0.2s ease;
   }
   .card:hover { box-shadow: var(--shadow-md); }
+
   .card-flat {
-    @apply bg-white dark:bg-[#111827] rounded-2xl border border-gray-100 dark:border-gray-800 p-6;
+    @apply bg-white dark:bg-[#111827]
+           rounded-2xl
+           border border-gray-100 dark:border-gray-800
+           p-6;
   }
 
-  /* ─── Input & Input-field (both work) ─── */
+  /* ── Inputs (both .input and .input-field work) ─────────────── */
   .input,
   .input-field {
-    @apply w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700
+    @apply w-full px-4 py-3 rounded-xl
+           border border-gray-200 dark:border-gray-700
            bg-white dark:bg-[#1a2235]
            text-gray-900 dark:text-gray-100
            placeholder-gray-400 dark:placeholder-gray-500
-           focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500
-           transition-all duration-150;
+           focus:outline-none
+           focus:ring-2 focus:ring-blue-500/30
+           focus:border-blue-500 dark:focus:border-blue-400;
     font-size: 0.9375rem;
+    line-height: 1.5;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
+
+  .input:hover:not(:focus),
+  .input-field:hover:not(:focus) {
+    @apply border-gray-300 dark:border-gray-600;
+  }
+
   select.input,
   select.input-field {
-    @apply cursor-pointer;
+    @apply cursor-pointer appearance-none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-right: 40px;
   }
+
   textarea.input,
   textarea.input-field {
     resize: vertical;
+    min-height: 80px;
   }
 
-  /* ─── Badges ─── */
+  /* ── Badges ─────────────────────────────────────────────────── */
   .badge {
     @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold;
     letter-spacing: 0.01em;
   }
-  .badge-blue   { @apply bg-blue-50   dark:bg-blue-900/30   text-blue-700   dark:text-blue-300;   }
-  .badge-green  { @apply bg-green-50  dark:bg-green-900/30  text-green-700  dark:text-green-300;  }
-  .badge-yellow { @apply bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300; }
-  .badge-red    { @apply bg-red-50    dark:bg-red-900/30    text-red-700    dark:text-red-300;    }
-  .badge-purple { @apply bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300; }
-  .badge-gray   { @apply bg-gray-100  dark:bg-gray-800      text-gray-600   dark:text-gray-300;   }
+  .badge-blue   { @apply bg-blue-50   dark:bg-blue-900/40   text-blue-700   dark:text-blue-300   border border-blue-100   dark:border-blue-800/50; }
+  .badge-green  { @apply bg-green-50  dark:bg-green-900/40  text-green-700  dark:text-green-300  border border-green-100  dark:border-green-800/50; }
+  .badge-yellow { @apply bg-yellow-50 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300 border border-yellow-100 dark:border-yellow-800/50; }
+  .badge-red    { @apply bg-red-50    dark:bg-red-900/40    text-red-700    dark:text-red-300    border border-red-100    dark:border-red-800/50; }
+  .badge-purple { @apply bg-purple-50 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 border border-purple-100 dark:border-purple-800/50; }
+  .badge-gray   { @apply bg-gray-100  dark:bg-gray-800      text-gray-600   dark:text-gray-300   border border-gray-200   dark:border-gray-700; }
 
-  /* ─── Nav ─── */
-  .nav-link { @apply text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium transition-colors duration-150 text-sm; }
+  /* ── Navigation ─────────────────────────────────────────────── */
+  .nav-link {
+    @apply text-gray-500 dark:text-gray-400
+           hover:text-gray-900 dark:hover:text-white
+           font-medium text-sm;
+    transition: color 0.15s ease;
+  }
   .nav-link-active { @apply text-blue-600 dark:text-blue-400 font-semibold; }
 
-  /* ─── Utility ─── */
-  .glass { @apply bg-white/10 backdrop-blur-xl border border-white/20; }
-  .gradient-text { @apply bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent; }
+  /* ── Utility classes ─────────────────────────────────────────── */
+  .gradient-text {
+    @apply bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent;
+  }
+  .glass {
+    @apply bg-white/10 dark:bg-white/5 backdrop-blur-xl border border-white/20 dark:border-white/10;
+  }
   .section { @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8; }
   .page-wrapper { @apply min-h-screen bg-[#F5F7FA] dark:bg-[#0A0F1E]; }
-  .skeleton { @apply bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse; }
+  .skeleton { @apply bg-gray-200 dark:bg-gray-700/70 rounded-xl animate-pulse; }
   .divider { @apply h-px bg-gray-100 dark:bg-gray-800 my-4; }
 
-  /* ─── Dark surface levels ─── */
-  .surface { @apply bg-white dark:bg-[#111827]; }
+  /* ── Surface levels ──────────────────────────────────────────── */
+  .surface   { @apply bg-white dark:bg-[#111827]; }
   .surface-2 { @apply bg-gray-50 dark:bg-[#0d1117]; }
+  .surface-3 { @apply bg-gray-100 dark:bg-[#161d2e]; }
 }
 
-/* ─── Scrollbar ─── */
+/* ── Scrollbar ───────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { @apply bg-gray-300 dark:bg-gray-600 rounded-full; }
-::-webkit-scrollbar-thumb:hover { @apply bg-gray-400 dark:bg-gray-500; }
-
-/* ─── Selection ─── */
-::selection { @apply bg-blue-600/20 text-blue-900 dark:text-blue-100; }
-
-/* ─── Focus visible ─── */
-:focus-visible { @apply outline-none ring-2 ring-blue-500/50 ring-offset-2 ring-offset-white dark:ring-offset-gray-900; }
-
-/* ─── Dark mode transition for all elements ─── */
-*, *::before, *::after {
-  transition-property: background-color, border-color, color, fill, stroke;
-  transition-timing-function: ease;
-  transition-duration: 150ms;
+::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 10px;
 }
-/* But don't transition transforms/opacity (interferes with animations) */
-.no-theme-transition {
-  transition: none !important;
+.dark ::-webkit-scrollbar-thumb {
+  background-color: #374151;
 }
+::-webkit-scrollbar-thumb:hover {
+  background-color: #9ca3af;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: #4b5563;
+}
+
+/* ── Text selection ──────────────────────────────────────────── */
+::selection {
+  background-color: rgba(59, 130, 246, 0.2);
+  color: #1e40af;
+}
+.dark ::selection {
+  background-color: rgba(59, 130, 246, 0.3);
+  color: #bfdbfe;
+}
+
+/* ── Focus ring ──────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid rgba(59, 130, 246, 0.6);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ── Prevent flash of wrong theme on load ────────────────────── */
+html.dark { background-color: #0A0F1E; }
+html:not(.dark) { background-color: #F5F7FA; }
+
+/* ── Dark mode — specific overrides for 3rd party components ─── */
+.dark .recharts-cartesian-grid line { stroke: #1f2937; }
+.dark .recharts-text { fill: #9ca3af; }
+.dark .recharts-tooltip-wrapper .recharts-default-tooltip {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+  color: #f3f4f6 !important;
+}
+
+/* ── Animations (theme-safe) ─────────────────────────────────── */
+@keyframes fadeIn  { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideIn { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes pulse   { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+.animate-fadeIn  { animation: fadeIn  0.3s ease forwards; }
+.animate-slideIn { animation: slideIn 0.3s ease forwards; }
