@@ -87,7 +87,7 @@
   .btn-secondary {
     @apply inline-flex items-center justify-center gap-2
            bg-white dark:bg-gray-800
-           hover:bg-gray-50 dark:hover:bg-gray-750
+           hover:bg-gray-50 dark:hover:bg-gray-700
            text-gray-700 dark:text-gray-200
            font-semibold
            py-2.5 px-5 rounded-xl
