@@ -1,18 +1,18 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Briefcase, Clock, CheckCircle, Bell, ArrowRight, Search, TrendingUp,Zap, Bookmark, FileText, User } from 'lucide-react';
+import { Briefcase, Clock, CheckCircle, Bell, ArrowRight, Search, TrendingUp, Zap, Bookmark, FileText, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import { useAuth } from '../../context/AuthContext';
 import { getMyApplications, getNotifications } from '../../api/internships';
 
 const statusConfig = {
-  applied:              { label: 'Applied',             color: 'badge-yellow' },
-  under_review:         { label: 'Under Review',        color: 'badge-blue' },
-  shortlisted:          { label: 'Shortlisted',         color: 'badge-purple' },
-  interview_scheduled:  { label: 'Interview Scheduled', color: 'badge-blue' },
-  accepted:             { label: 'Accepted',            color: 'badge-green' },
-  rejected:             { label: 'Rejected',            color: 'badge-red' },
+  applied:             { label: 'Applied',             color: 'badge-yellow' },
+  under_review:        { label: 'Under Review',        color: 'badge-blue' },
+  shortlisted:         { label: 'Shortlisted',         color: 'badge-purple' },
+  interview_scheduled: { label: 'Interview Scheduled', color: 'badge-blue' },
+  accepted:            { label: 'Accepted',            color: 'badge-green' },
+  rejected:            { label: 'Rejected',            color: 'badge-red' },
 };
 
 const fadeUp = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } };
@@ -37,10 +37,10 @@ export default function StudentDashboard() {
   }, []);
 
   const stats = [
-    { label: 'Applied',    value: applications.length,                                                 icon: Briefcase,   color: 'text-blue-600',   bg: 'bg-blue-50 dark:bg-blue-900/20',   border: 'border-blue-100 dark:border-blue-900/40' },
-    { label: 'In Review',  value: applications.filter(a => a.status === 'under_review').length,        icon: Clock,       color: 'text-amber-600',  bg: 'bg-amber-50 dark:bg-amber-900/20', border: 'border-amber-100 dark:border-amber-900/40' },
-    { label: 'Interviews', value: applications.filter(a => a.status === 'interview_scheduled').length, icon: TrendingUp,  color: 'text-violet-600', bg: 'bg-violet-50 dark:bg-violet-900/20', border: 'border-violet-100 dark:border-violet-900/40' },
-    { label: 'Accepted',   value: applications.filter(a => a.status === 'accepted').length,            icon: CheckCircle, color: 'text-emerald-600',bg: 'bg-emerald-50 dark:bg-emerald-900/20', border: 'border-emerald-100 dark:border-emerald-900/40' },
+    { label: 'Applied',    value: applications.length,                                                 icon: Briefcase,   color: 'text-blue-600',    bg: 'bg-blue-50 dark:bg-blue-900/20',    border: 'border-blue-100 dark:border-blue-900/40' },
+    { label: 'In Review',  value: applications.filter(a => a.status === 'under_review').length,        icon: Clock,       color: 'text-amber-600',   bg: 'bg-amber-50 dark:bg-amber-900/20',  border: 'border-amber-100 dark:border-amber-900/40' },
+    { label: 'Interviews', value: applications.filter(a => a.status === 'interview_scheduled').length, icon: TrendingUp,  color: 'text-violet-600',  bg: 'bg-violet-50 dark:bg-violet-900/20', border: 'border-violet-100 dark:border-violet-900/40' },
+    { label: 'Accepted',   value: applications.filter(a => a.status === 'accepted').length,            icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-900/20', border: 'border-emerald-100 dark:border-emerald-900/40' },
   ];
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
@@ -90,14 +90,16 @@ export default function StudentDashboard() {
           ))}
         </motion.div>
 
+        {/* Main grid */}
         <div className="grid lg:grid-cols-3 gap-6">
 
-          {/* Recent Applications */}
-          <div className="lg:col-span-2 space-y-6">
+          {/* LEFT — Recent Applications */}
+          <div className="lg:col-span-2">
             <div className="bg-white dark:bg-[#111827] rounded-2xl border border-gray-100 dark:border-gray-800 p-6">
               <div className="flex items-center justify-between mb-5">
                 <h2 className="text-base font-bold text-gray-900 dark:text-white">Recent Applications</h2>
-                <Link to="/student/applications" className="text-sm text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-1 hover:underline">
+                <Link to="/student/applications"
+                  className="text-sm text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-1 hover:underline">
                   View all <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
@@ -118,7 +120,7 @@ export default function StudentDashboard() {
                     return (
                       <motion.div key={app.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: i * 0.06 }}
-                        className="flex items-center justify-between p-3.5 bg-gray-50 dark:bg-gray-800/60 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group">
+                        className="flex items-center justify-between p-3.5 bg-gray-50 dark:bg-gray-800/60 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                         <div className="flex items-center gap-3">
                           <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                             {app.companyName?.charAt(0)}
@@ -135,15 +137,17 @@ export default function StudentDashboard() {
                 </div>
               )}
             </div>
+          </div>
+          {/* END LEFT */}
 
-          {/* Right Column */}
+          {/* RIGHT — Notifications + Quick Actions + CTA */}
           <div className="space-y-5">
 
             {/* Notifications */}
             <div className="bg-white dark:bg-[#111827] rounded-2xl border border-gray-100 dark:border-gray-800 p-5">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                  <Bell className="w-4.5 h-4.5" /> Notifications
+                  <Bell className="w-4 h-4" /> Notifications
                   {unreadCount > 0 && (
                     <span className="w-5 h-5 bg-blue-600 text-white text-xs rounded-full flex items-center justify-center font-bold">
                       {unreadCount}
@@ -156,7 +160,10 @@ export default function StudentDashboard() {
               ) : (
                 <div className="space-y-2">
                   {notifications.slice(0, 4).map((n) => (
-                    <div key={n.id} className={`p-3 rounded-xl text-sm ${!n.isRead ? 'bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800' : 'bg-gray-50 dark:bg-gray-800/60'}`}>
+                    <div key={n.id}
+                      className={`p-3 rounded-xl ${!n.isRead
+                        ? 'bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800'
+                        : 'bg-gray-50 dark:bg-gray-800/60'}`}>
                       <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-xs">{n.message}</p>
                     </div>
                   ))}
@@ -169,11 +176,11 @@ export default function StudentDashboard() {
               <h2 className="text-base font-bold text-gray-900 dark:text-white mb-3">Quick Actions</h2>
               <div className="space-y-1">
                 {[
-                  { to: '/student/browse',       icon: Search,    label: 'Find Internships',  color: 'text-blue-600',   bg: 'bg-blue-50 dark:bg-blue-900/20' },
-                  { to: '/student/applications', icon: Briefcase, label: 'My Applications',   color: 'text-violet-600', bg: 'bg-violet-50 dark:bg-violet-900/20' },
-                  { to: '/student/saved',        icon: Bookmark,  label: 'Saved Internships', color: 'text-amber-600',  bg: 'bg-amber-50 dark:bg-amber-900/20' },
-                  { to: '/student/resume',       icon: FileText,  label: 'ATS Resume',        color: 'text-cyan-600',   bg: 'bg-cyan-50 dark:bg-cyan-900/20' },
-                  { to: '/student/profile',      icon: User,      label: 'Update Profile',    color: 'text-emerald-600',bg: 'bg-emerald-50 dark:bg-emerald-900/20' },
+                  { to: '/student/browse',       icon: Search,    label: 'Find Internships',  color: 'text-blue-600',    bg: 'bg-blue-50 dark:bg-blue-900/20' },
+                  { to: '/student/applications', icon: Briefcase, label: 'My Applications',   color: 'text-violet-600',  bg: 'bg-violet-50 dark:bg-violet-900/20' },
+                  { to: '/student/saved',        icon: Bookmark,  label: 'Saved Internships', color: 'text-amber-600',   bg: 'bg-amber-50 dark:bg-amber-900/20' },
+                  { to: '/student/resume',       icon: FileText,  label: 'ATS Resume',        color: 'text-cyan-600',    bg: 'bg-cyan-50 dark:bg-cyan-900/20' },
+                  { to: '/student/profile',      icon: User,      label: 'Update Profile',    color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-900/20' },
                 ].map((action) => (
                   <Link key={action.to} to={action.to}
                     className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group">
@@ -200,13 +207,16 @@ export default function StudentDashboard() {
                 <p className="text-blue-100 text-xs mb-4 leading-relaxed">
                   A complete profile gets 3x more views from companies.
                 </p>
-                <Link to="/student/profile" className="block text-center bg-white text-blue-600 font-bold py-2 rounded-xl text-sm hover:bg-blue-50 transition-colors">
+                <Link to="/student/profile"
+                  className="block text-center bg-white text-blue-600 font-bold py-2 rounded-xl text-sm hover:bg-blue-50 transition-colors">
                   Update Now →
                 </Link>
               </div>
             </div>
 
           </div>
+          {/* END RIGHT */}
+
         </div>
       </div>
     </div>
