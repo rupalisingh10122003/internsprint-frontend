@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Building2, Globe, Briefcase, FileText, BadgeCheck, MapPin, Hash, Upload, Save, Edit3, X, CheckCircle, Users, Calendar, Award, Phone, Mail } from 'lucide-react';
+import { Building2, Globe, Briefcase, FileText, BadgeCheck, MapPin, Hash, Upload, Save, Edit3, X, CheckCircle, Calendar, Award, Phone, Mail } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Navbar from '../../components/Navbar';
 import api from '../../api/axios';
