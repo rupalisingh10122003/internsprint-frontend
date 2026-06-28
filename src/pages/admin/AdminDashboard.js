@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Users, Building2, Briefcase, CheckCircle, Trash2, Shield, TrendingUp, BarChart3, PieChart, Mail, Globe, MapPin, Calendar, Eye, GraduationCap, Code, User, X } from 'lucide-react';
+import { Users, Building2, Briefcase, CheckCircle, Trash2, Shield, TrendingUp, BarChart3, PieChart, Mail, Globe, MapPin, Calendar, Eye, GraduationCap, Code, User, X, Phone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import {
@@ -285,39 +285,43 @@ export default function AdminDashboard() {
                     </button>
                   </div>
 
-                  <div className="space-y-2.5 mb-5 bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Company Information</p>
-                    {selectedCompany.industry && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                        <Building2 className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                        <span><strong>Industry:</strong> {selectedCompany.industry}</span>
+                <div className="space-y-2.5 mb-5 bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Company Information</p>
+                  {selectedCompany.logoUrl && (
+                    <div className="flex justify-center mb-3">
+                      <img src={selectedCompany.logoUrl} alt="logo" className="w-16 h-16 rounded-xl object-contain border border-gray-200 dark:border-gray-700 bg-white p-1" />
+                    </div>
+                  )}
+                  {selectedCompany.tagline && <p className="text-xs italic text-gray-500 text-center mb-2">"{selectedCompany.tagline}"</p>}
+                  {selectedCompany.industry && <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300"><Building2 className="w-4 h-4 text-gray-400 flex-shrink-0" /><span><strong>Industry:</strong> {selectedCompany.industry}</span></div>}
+                  {selectedCompany.companyType && <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300"><Shield className="w-4 h-4 text-gray-400 flex-shrink-0" /><span><strong>Type:</strong> {selectedCompany.companyType}</span></div>}
+                  {selectedCompany.companySize && <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300"><Users className="w-4 h-4 text-gray-400 flex-shrink-0" /><span><strong>Size:</strong> {selectedCompany.companySize}</span></div>}
+                  {selectedCompany.foundedYear && <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300"><Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" /><span><strong>Founded:</strong> {selectedCompany.foundedYear}</span></div>}
+                  {selectedCompany.user?.email && <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300"><Mail className="w-4 h-4 text-gray-400 flex-shrink-0" /><a href={`mailto:${selectedCompany.user.email}`} className="hover:text-blue-600 hover:underline truncate">{selectedCompany.user.email}</a></div>}
+                  {selectedCompany.phone && <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300"><Phone className="w-4 h-4 text-gray-400 flex-shrink-0" /><span>{selectedCompany.phone}</span></div>}
+                  {selectedCompany.website && <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300"><Globe className="w-4 h-4 text-gray-400 flex-shrink-0" /><a href={selectedCompany.website} target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 hover:underline truncate">{selectedCompany.website}</a></div>}
+                  {selectedCompany.linkedinUrl && <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300"><span className="w-4 h-4 bg-blue-700 text-white rounded flex items-center justify-center text-xs font-bold flex-shrink-0">in</span><a href={selectedCompany.linkedinUrl} target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 hover:underline truncate">{selectedCompany.linkedinUrl}</a></div>}
+                  {selectedCompany.location && <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300"><MapPin className="w-4 h-4 text-gray-400 flex-shrink-0" /><span>{selectedCompany.location}</span></div>}
+                  {selectedCompany.createdAt && <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300"><Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" /><span>Registered: {new Date(selectedCompany.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span></div>}
+                  {(selectedCompany.gstin || selectedCompany.cin || selectedCompany.pan) && (
+                    <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 space-y-1.5">
+                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Legal IDs</p>
+                      {selectedCompany.gstin && <div className="flex items-center justify-between text-xs"><span className="text-gray-500 font-medium">GSTIN</span><span className="font-mono font-bold text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-700 px-2 py-0.5 rounded border border-gray-200 dark:border-gray-600">{selectedCompany.gstin}</span></div>}
+                      {selectedCompany.cin && <div className="flex items-center justify-between text-xs"><span className="text-gray-500 font-medium">CIN</span><span className="font-mono font-bold text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-700 px-2 py-0.5 rounded border border-gray-200 dark:border-gray-600">{selectedCompany.cin}</span></div>}
+                      {selectedCompany.pan && <div className="flex items-center justify-between text-xs"><span className="text-gray-500 font-medium">PAN</span><span className="font-mono font-bold text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-700 px-2 py-0.5 rounded border border-gray-200 dark:border-gray-600">{selectedCompany.pan}</span></div>}
+                    </div>
+                  )}
+                  {selectedCompany.perks && (
+                    <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Perks</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {selectedCompany.perks.split(',').map((p, i) => (
+                          <span key={i} className="text-xs px-2 py-0.5 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 rounded-full border border-amber-100 dark:border-amber-800">{p.trim()}</span>
+                        ))}
                       </div>
-                    )}
-                    {selectedCompany.user?.email && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                        <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                        <a href={`mailto:${selectedCompany.user.email}`} className="hover:text-blue-600 hover:underline truncate">{selectedCompany.user.email}</a>
-                      </div>
-                    )}
-                    {selectedCompany.website && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                        <Globe className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                        <a href={selectedCompany.website} target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 hover:underline truncate">{selectedCompany.website}</a>
-                      </div>
-                    )}
-                    {selectedCompany.location && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                        <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                        <span>{selectedCompany.location}</span>
-                      </div>
-                    )}
-                    {selectedCompany.createdAt && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                        <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                        <span>Registered: {new Date(selectedCompany.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
-                      </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
+                </div>
 
                   <div className="mb-5">
                     <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Posted Internships ({internships.filter(i => i.companyName === selectedCompany.companyName).length})</p>
