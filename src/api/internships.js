@@ -23,8 +23,6 @@ export const closeInternship = (id) => api.put(`/api/company/internships/${id}/c
 export const getInternshipApplications = (id) => api.get(`/api/company/internships/${id}/applications`);
 export const updateApplicationStatus = (id, status) =>
   api.put(`/api/company/applications/${id}/status`, null, { params: { status } });
-
-// Fix: properly saves interview date to backend
 export const scheduleInterview = (id, interviewDateTime) =>
   api.put(`/api/company/applications/${id}/schedule`, null, {
     params: { interviewDate: interviewDateTime }
@@ -41,7 +39,7 @@ export const deactivateUser = (id) => api.put(`/api/admin/users/${id}/deactivate
 
 // AI Module — 60s timeout for Render free tier cold start
 const aiClient = axios.create({
-  baseURL: 'https://internsprint-ai.onrender.com',
+  baseURL: 'https://internsprint-ai-u8uk.onrender.com',
   timeout: 60000,
 });
 
