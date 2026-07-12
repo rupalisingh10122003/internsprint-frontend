@@ -6,7 +6,7 @@ import Navbar from '../../components/Navbar';
 import api from '../../api/axios';
 import axios from 'axios';
 
-const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dzeckhheq/image/upload';
+const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/gcl4z16g/image/upload';
 const CLOUDINARY_PRESET = 'ml_default';
 
 const INDUSTRIES = [

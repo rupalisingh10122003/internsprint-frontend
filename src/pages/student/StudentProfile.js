@@ -7,10 +7,10 @@ import { useAuth } from '../../context/AuthContext';
 import { getStudentProfile, updateStudentProfile } from '../../api/internships';
 import api from '../../api/axios';
 
+const CLOUDINARY_CLOUD = 'gcl4z16g';
+
 const skillSuggestions = ['Java', 'Python', 'React', 'Node.js', 'MySQL', 'MongoDB', 'Spring Boot', 'Machine Learning', 'TensorFlow', 'Figma', 'Adobe XD', 'SEO', 'Git', 'Docker', 'AWS'];
 
-// Fix Cloudinary raw PDFs — they serve as downloads by default
-// Adding fl_attachment:false forces browser-viewable mode
 const getViewUrl = (url) => {
   if (!url) return '#';
   if (url.includes('res.cloudinary.com') && url.includes('/raw/upload/')) {
@@ -61,9 +61,7 @@ export default function StudentProfile() {
       toast.success('Profile updated successfully!');
     } catch {
       toast.error('Failed to update profile');
-    } finally {
-      setSaving(false);
-    }
+    } finally { setSaving(false); }
   };
 
   const handleResumeUpload = async (e) => {
@@ -75,14 +73,14 @@ export default function StudentProfile() {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      const res = await api.post('/student/resume/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const res = await api.post('/api/student/resume/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
       setProfile(prev => ({ ...prev, resumeUrl: res.data.data }));
       toast.success('Resume uploaded!');
     } catch {
       toast.error('Upload failed. Try pasting the URL instead.');
-    } finally {
-      setUploading(false);
-    }
+    } finally { setUploading(false); }
   };
 
   const completionFields = [
@@ -159,7 +157,6 @@ export default function StudentProfile() {
           </div>
 
           <div className="lg:col-span-2 space-y-5">
-            {/* Basic Info */}
             <div className="bg-white dark:bg-[#111827] rounded-2xl border border-gray-100 dark:border-gray-800 p-6">
               <div className="flex items-center gap-2 mb-5">
                 <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
@@ -170,7 +167,7 @@ export default function StudentProfile() {
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">College</label>
-                  <input value={profile.college || ''} onChange={e => setProfile({ ...profile, college: e.target.value })} placeholder="Bharati Vidyapeeth..." className="input-field" />
+                  <input value={profile.college || ''} onChange={e => setProfile({ ...profile, college: e.target.value })} placeholder="Your college name..." className="input-field" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Degree</label>
@@ -194,7 +191,6 @@ export default function StudentProfile() {
               </div>
             </div>
 
-            {/* Skills */}
             <div className="bg-white dark:bg-[#111827] rounded-2xl border border-gray-100 dark:border-gray-800 p-6">
               <div className="flex items-center gap-2 mb-5">
                 <div className="w-8 h-8 bg-violet-50 dark:bg-violet-900/20 rounded-lg flex items-center justify-center">
@@ -231,7 +227,6 @@ export default function StudentProfile() {
               </div>
             </div>
 
-            {/* Projects */}
             <div className="bg-white dark:bg-[#111827] rounded-2xl border border-gray-100 dark:border-gray-800 p-6">
               <div className="flex items-center gap-2 mb-5">
                 <div className="w-8 h-8 bg-amber-50 dark:bg-amber-900/20 rounded-lg flex items-center justify-center">
@@ -240,12 +235,11 @@ export default function StudentProfile() {
                 <h3 className="font-bold text-gray-900 dark:text-white">Projects</h3>
               </div>
               <textarea value={profile.projects || ''} onChange={e => setProfile({ ...profile, projects: e.target.value })}
-                placeholder={`InternSprint | React, Spring Boot, MySQL | Full-stack internship platform\nPortfolio | HTML, CSS, JS | Personal portfolio`}
+                placeholder={`InternSprint | React, Spring Boot, MySQL | Full-stack internship platform`}
                 rows={4} className="input-field resize-none" />
               <p className="text-xs text-gray-400 mt-2">One project per line — Name | Tech Stack | Description</p>
             </div>
 
-            {/* Certifications */}
             <div className="bg-white dark:bg-[#111827] rounded-2xl border border-gray-100 dark:border-gray-800 p-6">
               <div className="flex items-center gap-2 mb-5">
                 <div className="w-8 h-8 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg flex items-center justify-center">
@@ -254,12 +248,10 @@ export default function StudentProfile() {
                 <h3 className="font-bold text-gray-900 dark:text-white">Certifications</h3>
               </div>
               <textarea value={profile.certifications || ''} onChange={e => setProfile({ ...profile, certifications: e.target.value })}
-                placeholder={`AWS Cloud Practitioner - Amazon - 2025\nReact Developer Certification - Meta - 2024`}
+                placeholder={`AWS Cloud Practitioner - Amazon - 2025`}
                 rows={3} className="input-field resize-none" />
-              <p className="text-xs text-gray-400 mt-2">One per line — Name - Issuer - Year</p>
             </div>
 
-            {/* Links & Resume */}
             <div className="bg-white dark:bg-[#111827] rounded-2xl border border-gray-100 dark:border-gray-800 p-6">
               <div className="flex items-center gap-2 mb-5">
                 <div className="w-8 h-8 bg-cyan-50 dark:bg-cyan-900/20 rounded-lg flex items-center justify-center">
@@ -284,7 +276,6 @@ export default function StudentProfile() {
                       : <><Upload className="w-4 h-4" /> Upload PDF (max 5MB)</>}
                     <input type="file" accept=".pdf" onChange={handleResumeUpload} className="hidden" disabled={uploading} />
                   </label>
-
                   {profile.resumeUrl && (
                     <div className="flex items-center gap-3 p-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 rounded-xl mb-3">
                       <CheckCircle className="w-4 h-4 text-emerald-600 flex-shrink-0" />
@@ -303,7 +294,6 @@ export default function StudentProfile() {
                       </div>
                     </div>
                   )}
-
                   <p className="text-xs text-gray-400 mb-1.5">Or paste a URL (Google Drive, Dropbox, Cloudinary)</p>
                   <input value={profile.resumeUrl || ''} onChange={e => setProfile({ ...profile, resumeUrl: e.target.value })} placeholder="https://drive.google.com/..." className="input-field" />
                 </div>
