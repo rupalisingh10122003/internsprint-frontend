@@ -7,7 +7,6 @@ import { useAuth } from '../../context/AuthContext';
 import { getStudentProfile, updateStudentProfile } from '../../api/internships';
 import api from '../../api/axios';
 
-const CLOUDINARY_CLOUD = 'gcl4z16g';
 
 const skillSuggestions = ['Java', 'Python', 'React', 'Node.js', 'MySQL', 'MongoDB', 'Spring Boot', 'Machine Learning', 'TensorFlow', 'Figma', 'Adobe XD', 'SEO', 'Git', 'Docker', 'AWS'];
 
