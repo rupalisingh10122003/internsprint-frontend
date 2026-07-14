@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://internsprint-backend-fm81.onrender.com',
+  baseURL: 'https://internsprint-backend-i2sm.onrender.com',
   timeout: 30000,
 });
 
